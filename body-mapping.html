@@ -1,11 +1,11 @@
 <html itemtype="http://schema.org/WebPage" lang="en">
 <head>
-    <title>URL Shortner | tiny URL tiny.live</title>
+    <title>URL Shortner | tiny URL trim.live</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="title" content="URL Shortner">
-    <meta name="description" content="tiny.live provides free and fast url shortning and will work forever. We don't clear the results and you can keep using the same url">
-    <meta property="og:image" content="http://www.shreyasgaonkar.com/images/srg.png">
-    <meta property="og:description" content="tiny.live provides free and fast url shortning and will work forever. We don't clear the results and you can keep using the same url">
+    <meta name="description" content="trim.live provides free and fast url shortning and will work forever. We don't clear the results and you can keep using the same url">
+    <meta property="og:image" content="https://www.shreyasgaonkar.com/favicon/favicon-32x32.png">
+    <meta property="og:description" content="trim.live provides free and fast url shortning and will work forever. We don't clear the results and you can keep using the same url">
     <meta name="author" content="Shreyas Gaonkar">
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet" type="text/css">
 
@@ -43,9 +43,16 @@
     body {
         background-color: #3a1e5c;
     }
+    .form-control:focus, .btn-outline-secondary.focus, .btn-outline-secondary:focus {
+        box-shadow: none !important;
+    }
     @media (max-width: 780px) {
         html {
             padding: 0 !important;
+        }
+        /* Hide HTTP/HTTPS sidebar on mobile*/
+        #basic-addon1{
+            display: none;
         }
     }
     </style>
@@ -81,49 +88,61 @@
     <script type="text/javascript">
 
     $(document).ready(function() {
+        var urlData = $('#urltext').val();
+        function runScript(e) {
+
+            if (e.keyCode == 13 && (urlData.length()>0) ) {
+                console.log("enter pressed")
+                // return false;
+            }
+        }
 
         $('#submit').click(function(e) {
             e.preventDefault();
 
             var urlData = $('#urltext').val();
             var headersData = {'url': urlData};
+            if(urlData.length > 1) {
+                $.ajax({
+                    type: "POST",
+                    url: window.location.pathname,
+                    headers: headersData,
+                    contentType: "application/json",
+                    dataType: 'json',
+                    success: function(response) {
+                        console.log(response);
+                        var hlink = '<a href="' + response + '" target="_blank">' + response + '</a>';
+                        console.log(hlink);
+                        $('#link').html(hlink);
+                        $('.alert-success').css("display", "block");
+                        //alert('Your tiny URL has been generated and is shown under "Output"');
+                    },
+                    error: function(xhr, ajaxOptions, thrownError) {
+                        $('.alert-danger').css("display", "block");
+                        var rbody = xhr.responseJSON;
+                        console.log(ajaxOptions);
+                        console.log(xhr.status);
+                        console.log("thrown error is " + thrownError);
+                        if(xhr.status==403) {
+                            alert('You shall not pass!');
+                        } else if(xhr.status==400) {
+                            alert('Something\'s amiss... Try again.');
+                        } else if(xhr.status==429 && rbody.message=="Limit Exceeded") {
+                            alert('You have exceeded the number of requests today.  Try again tomorrow.')
+                        } else if(xhr.status==429) {
+                            alert('You need to slowwwwww dowwwwwwwwn.')
+                        }
+                        // else {
+                        //       alert('What did you break?');
+                        //   }
+                    } //end error
+                }); //end ajax
+            } // end textLength
+            else {alert("Enter URL!");}
+        }); //end click submit
+    }); //end doc ready
 
-            $.ajax({
-                type: "POST",
-                url: window.location.pathname,
-                headers: headersData,
-                contentType: "application/json",
-                dataType: 'json',
-                success: function(response) {
-                    console.log(response);
-                    var hlink = '<a href="' + response + '" target="_blank">' + response + '</a>';
-                    console.log(hlink);
-                    $('#link').html(hlink);
-                    $('.alert-success').css("display", "block");
-                    //alert('Your tiny URL has been generated and is shown under "Output"');
-                },
-                error: function(xhr, ajaxOptions, thrownError) {
-                    $('.alert-danger').css("display", "block");
-                    var rbody = xhr.responseJSON;
-                    console.log(ajaxOptions);
-                    console.log(xhr.status);
-                    console.log("thrown error is " + thrownError);
-                    if(xhr.status==403) {
-                        alert('You shall not pass!');
-                    } else if(xhr.status==400) {
-                        alert('Something\'s amiss... Try again.');
-                    } else if(xhr.status==429 && rbody.message=="Limit Exceeded") {
-                        alert('You have exceeded the number of requests today.  Try again tomorrow.')
-                    } else if(xhr.status==429) {
-                        alert('You need to slowwwwww dowwwwwwwwn.')
-                    }
-                    // else {
-                    //       alert('What did you break?');
-                    //   }
-                }
-            });
-        });
-    });
+
     </script>
     <div class="container">
         <div class="alert alert-success alert-dismissible fade show"  role="alert" style="display: none;">
@@ -138,10 +157,10 @@
                 <span aria-hidden="true">&times;</span>
             </button>
         </div>
-        <h1>tiny.live</h1>
+        <h1>trim.live</h1>
         <div class="input-group mb-3">
             <div class="input-group-prepend">
-                <span class="input-group-text" id="basic-addon1">http(s)</span>
+                <span class="input-group-text" id="basic-addon1">http(s)://</span>
             </div>
             <input id="urltext" type="text" class="form-control" placeholder="Enter your URL" aria-label="Username" aria-describedby="basic-addon1">
             <div class="input-group-append">
