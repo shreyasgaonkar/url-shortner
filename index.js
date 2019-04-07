@@ -25,7 +25,7 @@ exports.handler = (event, context, callback) => {
     var request = ddb.putItem(params);
     
     request.
-        on('success', function(response) { 
+        on('success', function() { 
             var sentUrl = "https://7s8vflux8c.execute-api.us-east-1.amazonaws.com/v1/" + shortUrl;
                 var apiResponse = {
             statusCode: 200,
