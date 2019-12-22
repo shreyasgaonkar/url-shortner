@@ -8,10 +8,8 @@ var ddb = new AWS.DynamoDB({
 exports.handler = (event, context, callback) => {
 
     if (event.resource == "/") {
-        // Create
         createURL();
     } else {
-        // Retrive:
         getURL();
     }
 
