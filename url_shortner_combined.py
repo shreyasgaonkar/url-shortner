@@ -109,6 +109,10 @@ def get_url(event):
         print(api_response)
         return api_response
 
+    # If hash not found, return to home page
+    except IndexError as exception:
+        return {"statusCode": 301, "headers": {"location": "https://trim.live"}, "body": json.dumps("Invalid webpage")}
+
     except Exception as exception:
         print(f"Unable to query. Error: {exception}")
 
