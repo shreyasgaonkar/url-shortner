@@ -137,18 +137,15 @@
                     success: function(response) {
                         console.log(response);
                         var hlink = '<a href="' + response + '" target="_blank">' + response + '</a>';
-                        console.log(hlink);
                         $('#link').html(hlink);
                         $('.alert-success').css("display", "block");
                     },
                     error: function(xhr, ajaxOptions, thrownError) {
                         $('.alert-danger').css("display", "block");
                         var rbody = xhr.responseJSON;
-                        console.log(ajaxOptions);
-                        console.log(xhr.status);
                         console.log("thrown error is " + thrownError);
                         if(xhr.status==403) {
-                            alert('You shall not pass!');
+                            $('.alert-danger').html('<strong>Error: </strong> ' + rbody + '.<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>')
                         } else if(xhr.status==400) {
                             alert('Something\'s amiss... Try again.');
                         } else if(xhr.status==429 && rbody.message=="Limit Exceeded") {
