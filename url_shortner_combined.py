@@ -1,7 +1,24 @@
 import json
 import hashlib
-import boto3
+import re
+from urllib.parse import urlparse
 import requests
+import boto3
+
+
+# Keep tab of global blacklists
+GLOBAL_BLACKLIST = set()
+
+# Iterate through the list to locate blacklisted domains
+URLS = ['https://raw.githubusercontent.com/hectorm/hmirror/master/data/spam404.com/list.txt',
+        'https://raw.githubusercontent.com/chadmayfield/pihole-blocklists/master/lists/pi_blocklist_porn_top1m.listt',
+        'https://www.stopforumspam.com/downloads/toxic_domains_whole.txt']
+
+for url in URLS:
+    lists = requests.get(url)
+    lists = lists.text
+    lists = re.split(r'\n', lists)
+    GLOBAL_BLACKLIST.update(set(lists))
 
 DDB = boto3.client('dynamodb', region_name='us-west-2')
 TABLENAME = 'url-shortner-new'
@@ -35,14 +52,14 @@ def create_url(event):
 
     # Check if webpage is legit
     url_validity = check_valid_url(long_url)
-    print(url_validity)
+    print(f"url_validity is {url_validity}")
     if url_validity is not True:
         return {
             "statusCode": 403,
             "headers": {
                 "Access-Control-Allow-Origin": "*"
             },
-            "body": json.dumps("Enter a different URL. Redirects aren't allowed")
+            "body": json.dumps(str(url_validity))
         }
 
     short_url = hashlib.md5(long_url.encode('utf-8')).hexdigest()[:6]
@@ -82,7 +99,6 @@ def get_url(event):
     """ Get original URL from the hashed value """
     retrieve_url = event['path']
     retrieve_url = retrieve_url.replace('/', '')
-    print(retrieve_url)
 
     try:
         response = DDB.query(
@@ -118,7 +134,11 @@ def get_url(event):
 
 
 def check_valid_url(url):
+    """Check for URL Validity before adding to it the database"""
     try:
+        current_url = urlparse(url)
+        if current_url.hostname in GLOBAL_BLACKLIST:
+            raise requests.exceptions.HTTPError("Cannot use this domain, try another URL")
         r = requests.head(url, timeout=1, allow_redirects=True)
         r.raise_for_status()
         status_code = r.status_code
@@ -129,7 +149,6 @@ def check_valid_url(url):
     except requests.exceptions.Timeout as exception:
         return f"Timeout Error: {exception}"
     except requests.exceptions.HTTPError as exception:
-        print("Raised error")
         print(f"HTTP Error: {exception}")
         return exception
     except requests.exceptions.ConnectionError as exception:
