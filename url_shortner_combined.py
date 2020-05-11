@@ -11,7 +11,7 @@ GLOBAL_BLACKLIST = set()
 
 # Iterate through the list to locate blacklisted domains
 URLS = ['https://raw.githubusercontent.com/hectorm/hmirror/master/data/spam404.com/list.txt',
-        'https://raw.githubusercontent.com/chadmayfield/pihole-blocklists/master/lists/pi_blocklist_porn_top1m.listt',
+        'https://raw.githubusercontent.com/chadmayfield/pihole-blocklists/master/lists/pi_blocklist_porn_top1m.list',
         'https://www.stopforumspam.com/downloads/toxic_domains_whole.txt']
 
 for url in URLS:
@@ -26,6 +26,15 @@ TABLENAME = 'url-shortner-new'
 
 def lambda_handler(event, context):
     """ Main Lambda function """
+    # Return Warm event
+    if(event['path'] == '/lambda'):
+        return {
+            "statusCode": 200,
+            "headers": {
+                "Access-Control-Allow-Origin": "*"
+            },
+            "body": json.dumps("Container Warm..")
+        }
     if event['resource'] == "/":
         response = create_url(event)
     else:
