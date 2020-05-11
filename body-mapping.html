@@ -1,66 +1,81 @@
 <html itemtype="http://schema.org/WebPage" lang="en">
-<head>
-    <title>URL Shortner | tiny URL trim.live</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="title" content="URL Shortner">
-    <meta name="description" content="trim.live provides free and fast url shortning and will work forever. We don't clear the results and you can keep using the same url">
-    <meta property="og:image" content="https://www.shreyasgaonkar.com/favicon/favicon-32x32.png">
-    <meta property="og:description" content="trim.live provides free and fast url shortning and will work forever. We don't clear the results and you can keep using the same url">
-    <meta name="author" content="Shreyas Gaonkar">
-    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet" type="text/css">
 
-    <!-- Favicon -->
-    <link rel="icon" type="image/png" href="https://www.shreyasgaonkar.com/favicon/favicon-32x32.png" sizes="32x32" />
-    <link rel="icon" type="image/png" href="https://www.shreyasgaonkar.com/favicon/android-chrome-192x192.png" sizes="192x192" />
-    <link rel="icon" type="image/png" href="https://www.shreyasgaonkar.com/favicon/favicon-96x96.png" sizes="96x96" />
-    <link rel="icon" type="image/png" href="https://www.shreyasgaonkar.com/favicon/favicon-16x16.png" sizes="16x16" />
-    <link rel="shortcut icon" href="https://www.shreyasgaonkar.com/favicon/favicon.ico" />
-    <meta name="theme-color" content="#ffffff" />
+    <head>
+        <title>URL Shortner | tiny URL trim.live</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="title" content="URL Shortner">
+        <meta name="description" content="trim.live provides free and fast url shortning and will work forever. We don't clear the results and you can keep using the same url">
+        <meta property="og:image" content="https://www.shreyasgaonkar.com/favicon/favicon-32x32.png">
+        <meta property="og:description" content="trim.live provides free and fast url shortning and will work forever. We don't clear the results and you can keep using the same url">
+        <meta name="author" content="Shreyas Gaonkar">
+        <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+
+        <!-- Favicon -->
+        <link rel="icon" type="image/png" href="https://www.shreyasgaonkar.com/favicon/favicon-32x32.png" sizes="32x32" />
+        <link rel="icon" type="image/png" href="https://www.shreyasgaonkar.com/favicon/android-chrome-192x192.png" sizes="192x192" />
+        <link rel="icon" type="image/png" href="https://www.shreyasgaonkar.com/favicon/favicon-96x96.png" sizes="96x96" />
+        <link rel="icon" type="image/png" href="https://www.shreyasgaonkar.com/favicon/favicon-16x16.png" sizes="16x16" />
+        <link rel="shortcut icon" href="https://www.shreyasgaonkar.com/favicon/favicon.ico" />
+        <meta name="theme-color" content="#ffffff" />
 
 
-    <style>
-    html{
-        border: 0;
-        margin:0;
-        padding: 20px;
-        height: 100vh;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-    }
-    h1,h2, #link, a {
-        color: #c2dea0 !important;
-    }
-    #urltext {
-        max-width: 250px;
-    }
-    #submit{
-        background-color: #c2dea0;
-        color: #3a1e5c;
-        border-color: transparent;
-    }
-    body {
-        background-color: #3a1e5c;
-    }
-    .form-control:focus, .btn-outline-secondary.focus, .btn-outline-secondary:focus {
-        box-shadow: none !important;
-    }
-    @media (max-width: 780px) {
-        html {
-            padding: 0 !important;
-        }
-        /* Hide HTTP/HTTPS sidebar on mobile*/
-        #basic-addon1{
-            display: none;
-        }
-    }
-    </style>
-</head>
-<body>
-    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
-    <style>
-    html{
+        <style>
+            html {
+                border: 0;
+                margin: 0;
+                padding: 20px;
+                height: 100vh;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+            }
+
+            h1,
+            h2,
+            #link,
+            a {
+                color: #c2dea0 !important;
+            }
+
+            #urltext {
+                max-width: 250px;
+            }
+
+            #submit {
+                background-color: #c2dea0;
+                color: #3a1e5c;
+                border-color: transparent;
+            }
+
+            body {
+                background-color: #3a1e5c;
+            }
+
+            .form-control:focus,
+            .btn-outline-secondary.focus,
+            .btn-outline-secondary:focus {
+                box-shadow: none !important;
+            }
+
+            @media (max-width: 780px) {
+                html {
+                    padding: 0 !important;
+                }
+
+                /* Hide HTTP/HTTPS sidebar on mobile*/
+                #basic-addon1 {
+                    display: none;
+                }
+            }
+
+        </style>
+    </head>
+
+    <body>
+        <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+        <style>
+            html{
         border: 0; margin:0; padding: 20px;
         height: 100vh;
         display: flex;
@@ -109,102 +124,116 @@
     }
 
     </style>
-    <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" type="text/javascript"></script>
-    <script type="text/javascript">
-
-    $(document).ready(function() {
-        var urlData = $('#urltext').val();
-        function runScript(e) {
-
-            if (e.keyCode == 13 && (urlData.length()>0) ) {
-                console.log("enter pressed");
-            }
-        }
-
-        $('#submit').click(function(e) {
-            e.preventDefault();
-
-            var urlData = $('#urltext').val();
-            var headersData = {'url': urlData};
-            if(urlData.length > 1) {
+        <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" type="text/javascript"></script>
+        <script type="text/javascript">
+            $(document).ready(function() {
+                // Keep function warm
                 $.ajax({
-                    type: "POST",
-                    url: window.location.pathname,
-                    headers: headersData,
-                    contentType: "application/json",
-                    dataType: 'json',
-                    success: function(response) {
-                        console.log(response);
-                        var hlink = '<a href="' + response + '" target="_blank">' + response + '</a>';
-                        $('#link').html(hlink);
-                        $('.alert-success').css("display", "block");
-                    },
-                    error: function(xhr, ajaxOptions, thrownError) {
-                        $('.alert-danger').css("display", "block");
-                        var rbody = xhr.responseJSON;
-                        console.log("thrown error is " + thrownError);
-                        if(xhr.status==403) {
-                            $('.alert-danger').html('<strong>Error: </strong> ' + rbody + '.<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>')
-                        } else if(xhr.status==400) {
-                            alert('Something\'s amiss... Try again.');
-                        } else if(xhr.status==429 && rbody.message=="Limit Exceeded") {
-                            alert('You have exceeded the number of requests today.  Try again tomorrow.')
-                        } else if(xhr.status==429) {
-                            alert('You need to slow down.')
-                        }
-                    } //end error
-                }); //end ajax
-            } // end textLength
-            else {alert("Enter URL!");}
+                    url: 'https://7s8vflux8c.execute-api.us-east-1.amazonaws.com/v1/lambda',
+                    success: console.log("Container warm now")
+                });
 
-            //Copy generated URL
+                var urlData = $('#urltext').val();
 
-            function myFunction() {
-                /* Get the text field */
-                var copyText = document.getElementById("link");
+                function runScript(e) {
 
-                /* Select the text field */
-                copyText.select();
+                    if (e.keyCode == 13 && (urlData.length() > 0)) {
+                        console.log("enter pressed");
+                    }
+                }
 
-                /* Copy the text inside the text field */
-                document.execCommand("Copy");
+                $('#submit').click(function(e) {
+                    e.preventDefault();
 
-                /* Alert the copied text */
-                alert("Copied the text: " + copyText.value);
-            }
+                    var urlData = $('#urltext').val();
+                    var headersData = {
+                        'url': urlData
+                    };
+                    if (urlData.length > 1) {
+                        $.ajax({
+                            type: "POST",
+                            url: window.location.pathname,
+                            headers: headersData,
+                            contentType: "application/json",
+                            dataType: 'json',
+                            success: function(response) {
+                                console.log(response);
+                                var hlink = '<a href="' + response + '" target="_blank">' + response + '</a>';
+                                $('#link').html(hlink);
+                                $('.alert-success').css("display", "block");
+                            },
+                            error: function(xhr, ajaxOptions, thrownError) {
+                                $('.alert-danger').css("display", "block");
+                                var rbody = xhr.responseJSON;
+                                console.log("thrown error is " + thrownError);
+                                if (xhr.status == 403) {
+                                    $('.alert-danger').html('<strong>Error: </strong> ' + rbody +
+                                        '.<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>')
+                                }
+                                else if (xhr.status == 400) {
+                                    alert('Something\'s amiss... Try again.');
+                                }
+                                else if (xhr.status == 429 && rbody.message == "Limit Exceeded") {
+                                    alert('You have exceeded the number of requests today.  Try again tomorrow.')
+                                }
+                                else if (xhr.status == 429) {
+                                    alert('You need to slow down.')
+                                }
+                            } //end error
+                        }); //end ajax
+                    } // end textLength
+                    else {
+                        alert("Enter URL!");
+                    }
 
-        }); //end click submit
-    }); //end doc ready
+                    //Copy generated URL
 
+                    function myFunction() {
+                        /* Get the text field */
+                        var copyText = document.getElementById("link");
 
-    </script>
-    <div class="container">
-        <div class="alert alert-success alert-dismissible fade show"  role="alert" style="display: none;">
-            <strong>Sweet!</strong> See the shortned url below.
-            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-            </button>
-        </div>
-        <div class="alert alert-danger alert-dismissible fade show" role="alert" style="display: none;">
-            <strong>Umm..?!</strong> Something went wrong. <a href="." class="alert-link">Refresh?</a>.
-            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-            </button>
-        </div>
-        <h1>trim.live</h1>
-        <div class="input-group mb-3">
-            <div class="input-group-prepend">
-                <span class="input-group-text" id="basic-addon1">http(s)://</span>
+                        /* Select the text field */
+                        copyText.select();
+
+                        /* Copy the text inside the text field */
+                        document.execCommand("Copy");
+
+                        /* Alert the copied text */
+                        alert("Copied the text: " + copyText.value);
+                    }
+
+                }); //end click submit
+            }); //end doc ready
+
+        </script>
+        <div class="container">
+            <div class="alert alert-success alert-dismissible fade show" role="alert" style="display: none;">
+                <strong>Sweet!</strong> See the shortned url below.
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
             </div>
-            <input id="urltext" type="text" class="form-control" placeholder="Enter your URL" aria-label="Username" aria-describedby="basic-addon1">
-            <div class="input-group-append">
-                <button id="submit" class="btn btn-outline-secondary" type="button">Shrink It!</button>
+            <div class="alert alert-danger alert-dismissible fade show" role="alert" style="display: none;">
+                <strong>Umm..?!</strong> Something went wrong. <a href="." class="alert-link">Refresh?</a>.
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
             </div>
-        </div>
-        <div id="link"> Your tiny URL will appear here after you Shrink It!</div>
-    </div> <!-- end container -->
-    <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" type="text/javascript"></script>
-</body>
+            <h1>trim.live</h1>
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <span class="input-group-text" id="basic-addon1">http(s)://</span>
+                </div>
+                <input id="urltext" type="text" class="form-control" placeholder="Enter your URL" aria-label="Username" aria-describedby="basic-addon1">
+                <div class="input-group-append">
+                    <button id="submit" class="btn btn-outline-secondary" type="button">Shrink It!</button>
+                </div>
+            </div>
+            <div id="link"> Your tiny URL will appear here after you Shrink It!</div>
+        </div> <!-- end container -->
+        <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" type="text/javascript"></script>
+    </body>
+
 </html>
