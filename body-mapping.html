@@ -149,12 +149,11 @@
 
                 var urlData = $('#urltext').val();
 
-                function runScript(e) {
-
-                    if (e.keyCode == 13 && (urlData.length() > 0)) {
-                        console.log("enter pressed");
+                $('#urltext').keypress(function(e) {
+                    if (e.which == 13) {
+                        $('#submit').click();
                     }
-                }
+                })
 
                 $('#submit').click(function(e) {
                     e.preventDefault();
