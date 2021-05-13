@@ -1,33 +1,55 @@
 import json
 import hashlib
 import re
+import os
+import concurrent.futures
 from urllib.parse import urlparse
 import requests
 import boto3
 
-
-# Keep tab of global blacklists
-GLOBAL_BLACKLIST = set()
 
 # Iterate through the list to locate blacklisted domains
 URLS = ['https://raw.githubusercontent.com/hectorm/hmirror/master/data/spam404.com/list.txt',
         'https://raw.githubusercontent.com/chadmayfield/pihole-blocklists/master/lists/pi_blocklist_porn_top1m.list',
         'https://www.stopforumspam.com/downloads/toxic_domains_whole.txt']
 
-for url in URLS:
+# ==================
+# Override AWS Region below, otherwise will use Lambda function's region
+
+REGION_NAME = 'us-west-2'
+# ==================
+
+try:
+    REGION_NAME
+except NameError:
+    REGION_NAME = os.environ['AWS_REGION']
+
+print(os.environ['AWS_REGION'])
+
+DDB = boto3.client('dynamodb', region_name=REGION_NAME)
+TABLENAME = 'url-shortner-new'
+
+# Keep tab of global blacklists
+GLOBAL_BLACKLIST = set()
+
+
+def update_blacklist(url):
     lists = requests.get(url)
     lists = lists.text
     lists = re.split(r'\n', lists)
     GLOBAL_BLACKLIST.update(set(lists))
 
-DDB = boto3.client('dynamodb', region_name='us-west-2')
-TABLENAME = 'url-shortner-new'
+
+# Start multithreading on individual urls
+with concurrent.futures.ThreadPoolExecutor() as executor:
+    results = [executor.submit(update_blacklist, url) for url in URLS]
 
 
 def lambda_handler(event, context):
     """ Main Lambda function """
+
     # Return Warm event
-    if(event['path'] == '/lambda'):
+    if event['path'] == '/lambda':
         return {
             "statusCode": 200,
             "headers": {
@@ -47,6 +69,8 @@ def create_url(event):
     """ Function to create hash for URL shortner """
 
     long_url = event['headers']['url']
+    url_components = urlparse(long_url)
+    protocol = url_components.scheme
 
     # Clean string to remove any whitespace and protocols
     new_str = long_url.strip()
@@ -54,14 +78,15 @@ def create_url(event):
     new_str = new_str.replace('https://', '')
     new_str = new_str.replace('http://', '')
 
-    # Since we don't know if the website entered is to be served on
-    # HTTP or HTTPs, send it to HTTP and let server redirect to HTTPS
-
-    long_url = f"http://{new_str}"
+    if protocol:
+        long_url = f"{protocol}://{new_str}"
+    else:
+        long_url = f"http://{new_str}"
 
     # Check if webpage is legit
     url_validity = check_valid_url(long_url)
     print(f"url_validity is {url_validity}")
+
     if url_validity is not True:
         return {
             "statusCode": 403,
@@ -97,7 +122,6 @@ def create_url(event):
             },
             "body": json.dumps(url)
         }
-        print(api_response)
         return api_response
 
     except Exception as exception:
@@ -106,6 +130,7 @@ def create_url(event):
 
 def get_url(event):
     """ Get original URL from the hashed value """
+
     retrieve_url = event['path']
     retrieve_url = retrieve_url.replace('/', '')
 
@@ -122,7 +147,6 @@ def get_url(event):
                 }
             }
         )
-        print(response)
         full_url = response['Items'][0]['longUrl']['S']
         api_response = {
             "statusCode": 301,
@@ -131,7 +155,6 @@ def get_url(event):
             },
             "body": json.dumps(response)
         }
-        print(api_response)
         return api_response
 
     # If hash not found, return to home page
@@ -144,6 +167,7 @@ def get_url(event):
 
 def check_valid_url(url):
     """Check for URL Validity before adding to it the database"""
+
     try:
         current_url = urlparse(url)
         if current_url.hostname in GLOBAL_BLACKLIST:
