@@ -8,48 +8,44 @@ import requests
 import boto3
 
 
-# Iterate through the list to locate blacklisted domains
-URLS = ['https://raw.githubusercontent.com/hectorm/hmirror/master/data/spam404.com/list.txt',
-        'https://raw.githubusercontent.com/chadmayfield/pihole-blocklists/master/lists/pi_blocklist_porn_top1m.list',
-        'https://www.stopforumspam.com/downloads/toxic_domains_whole.txt']
-
-# ==================
-# Override AWS Region below, otherwise will use Lambda function's region
-
-REGION_NAME = 'us-west-2'
-# ==================
-
-try:
-    REGION_NAME
-except NameError:
-    REGION_NAME = os.environ['AWS_REGION']
-
-print(os.environ['AWS_REGION'])
-
-DDB = boto3.client('dynamodb', region_name=REGION_NAME)
-TABLENAME = 'url-shortner-new'
-
 # Keep tab of global blacklists
 GLOBAL_BLACKLIST = set()
 
+# Override AWS Region below, otherwise will use Lambda function's region
+try:
+    REGION_NAME = os.environ["AWS_REGION"]
+except (NameError, KeyError):
+    REGION_NAME = "us-west-2"
+
+# Set DynamoDB client and table name
+DDB = boto3.client("dynamodb", region_name=REGION_NAME)
+TABLENAME = "url-shortner-new"
+
+# Iterate through the list to locate blacklisted domains
+URLS = ["https://raw.githubusercontent.com/hectorm/hmirror/master/data/spam404.com/list.txt",
+        "https://raw.githubusercontent.com/chadmayfield/pihole-blocklists/master/lists/pi_blocklist_porn_top1m.list",
+        "https://www.stopforumspam.com/downloads/toxic_domains_whole.txt"]
+
 
 def update_blacklist(url):
-    lists = requests.get(url)
-    lists = lists.text
-    lists = re.split(r'\n', lists)
-    GLOBAL_BLACKLIST.update(set(lists))
+    """Update global blacklist from the blacklisted domains."""
+    try:
+        str_lists = requests.get(url).text
+        lists = re.split(r"\n", str_lists)
+        GLOBAL_BLACKLIST.update(set(lists))
+    except requests.exceptions.MissingSchema:
+        pass  # skip invalid urls
 
 
 # Start multithreading on individual urls
 with concurrent.futures.ThreadPoolExecutor() as executor:
-    results = [executor.submit(update_blacklist, url) for url in URLS]
+    _ = [executor.submit(update_blacklist, url) for url in URLS]
 
 
 def lambda_handler(event, context):
-    """ Main Lambda function """
-
-    # Return Warm event
-    if event['path'] == '/lambda':
+    """Call Lambda's function handler."""
+    # /lambda endpoint on API Gateway will keep the function warm
+    if event["path"] == "/lambda":
         return {
             "statusCode": 200,
             "headers": {
@@ -57,7 +53,8 @@ def lambda_handler(event, context):
             },
             "body": json.dumps("Container Warm..")
         }
-    if event['resource'] == "/":
+    # "/" resource on API Gateway is the url shortner domain
+    if event["resource"] == "/":
         response = create_url(event)
     else:
         response = get_url(event)
@@ -66,17 +63,16 @@ def lambda_handler(event, context):
 
 
 def create_url(event):
-    """ Function to create hash for URL shortner """
-
-    long_url = event['headers']['url']
+    """Create shortened url from the event."""
+    long_url = event["headers"]["url"]
     url_components = urlparse(long_url)
     protocol = url_components.scheme
 
     # Clean string to remove any whitespace and protocols
     new_str = long_url.strip()
-    new_str = new_str.replace(' ', '%20')
-    new_str = new_str.replace('https://', '')
-    new_str = new_str.replace('http://', '')
+    new_str = new_str.replace(" ", "%20")
+    new_str = new_str.replace("https://", "")
+    new_str = new_str.replace("http://", "")
 
     if protocol:
         long_url = f"{protocol}://{new_str}"
@@ -96,17 +92,17 @@ def create_url(event):
             "body": json.dumps(str(url_validity))
         }
 
-    short_url = hashlib.md5(long_url.encode('utf-8')).hexdigest()[:6]
+    short_url = hashlib.sha256(long_url.encode("utf-8")).hexdigest()[:6]
 
     try:
         DDB.put_item(
             TableName=TABLENAME,
             Item={
                 "longUrl": {
-                    'S': long_url
+                    "S": long_url
                 },
                 "shortUrl": {
-                    'S': short_url
+                    "S": short_url
                 }
             },
             ReturnConsumedCapacity="TOTAL",
@@ -129,10 +125,9 @@ def create_url(event):
 
 
 def get_url(event):
-    """ Get original URL from the hashed value """
-
-    retrieve_url = event['path']
-    retrieve_url = retrieve_url.replace('/', '')
+    """Get original URL from the hashed value."""
+    retrieve_url = event["path"]
+    retrieve_url = retrieve_url.replace("/", "")
 
     try:
         response = DDB.query(
@@ -142,12 +137,12 @@ def get_url(event):
                 "#yr": "shortUrl"
             },
             ExpressionAttributeValues={
-                ':yyyy': {
-                    'S': retrieve_url
+                ":yyyy": {
+                    "S": retrieve_url
                 }
             }
         )
-        full_url = response['Items'][0]['longUrl']['S']
+        full_url = response["Items"][0]["longUrl"]["S"]
         api_response = {
             "statusCode": 301,
             "headers": {
@@ -158,26 +153,26 @@ def get_url(event):
         return api_response
 
     # If hash not found, return to home page
-    except IndexError as exception:
+    except IndexError:
         return {"statusCode": 301, "headers": {"location": "https://trim.live"}, "body": json.dumps("Invalid webpage")}
-
     except Exception as exception:
         print(f"Unable to query. Error: {exception}")
 
 
 def check_valid_url(url):
-    """Check for URL Validity before adding to it the database"""
-
+    """Check for URL Validity before adding to it the database."""
     try:
         current_url = urlparse(url)
         if current_url.hostname in GLOBAL_BLACKLIST:
-            raise requests.exceptions.HTTPError("Cannot use this domain, try another URL")
+            raise requests.exceptions.HTTPError(
+                "Cannot use this domain, try another URL")
         r = requests.head(url, timeout=1, allow_redirects=True)
         r.raise_for_status()
         status_code = r.status_code
         print(status_code)
         if status_code in (301, 307):
-            raise requests.exceptions.HTTPError("Enter a different URL. Redirects aren't allowed")
+            raise requests.exceptions.HTTPError(
+                "Enter a different URL. Redirects aren't allowed")
 
     except requests.exceptions.Timeout as exception:
         return f"Timeout Error: {exception}"
