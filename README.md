@@ -1,4 +1,4 @@
-# [trim.live](https://trim.live/) [![CodeFactor](https://www.codefactor.io/repository/github/shreyasgaonkar/url-shortner/badge)](https://www.codefactor.io/repository/github/shreyasgaonkar/url-shortner)
+# [trim.live](https://trim.live/) [![CodeFactor](https://www.codefactor.io/repository/github/shreyasgaonkar/url-shortner/badge)](https://www.codefactor.io/repository/github/shreyasgaonkar/url-shortner) ![Tests](https://github.com/shreyasgaonkar/url-shortner/actions/workflows/tests.yml/badge.svg)
 
 https://trim.live provides free and fast url shortner that will work forever. We don't clear the results and you can keep using the same url to fetch the original websites.
 
