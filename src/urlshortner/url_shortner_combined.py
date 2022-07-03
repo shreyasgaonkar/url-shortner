@@ -92,7 +92,7 @@ def create_url(event):
             "body": json.dumps(str(url_validity))
         }
 
-    short_url = hashlib.md5(long_url.encode("utf-8")).hexdigest()[:6]
+    short_url = hashlib.sha256(long_url.encode("utf-8")).hexdigest()[:6]
 
     try:
         DDB.put_item(
